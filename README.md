@@ -215,11 +215,3 @@ Authorization: Bearer <token>
 
 ---
 
-## `.env.example` file bhi banao
-
-Root mein `.env.example` naam se file banao:
-```
-PORT=3000
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/financedb
-JWT_SECRET=your_secret_key_here
-JWT_EXPIRES_IN=7d
