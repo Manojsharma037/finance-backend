@@ -84,7 +84,7 @@ router.get('/', auth, ctrl.getAll);
  * @swagger
  * /api/records/{id}:
  *   put:
- *     summary: Update a record (Admin/Analyst only)
+ *     summary: Update a record (Admin only)
  *     tags: [Records]
  *     security:
  *       - bearerAuth: []

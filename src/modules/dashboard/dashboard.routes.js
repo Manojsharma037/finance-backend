@@ -7,7 +7,7 @@ const guard = require('../../middleware/roleGuard');
  * @swagger
  * /api/dashboard/summary:
  *   get:
- *     summary: Get financial summary (Admin/Analyst only)
+ *     summary: Get financial summary (Admin/Analyst/viewer only)
  *     tags: [Dashboard]
  *     security:
  *       - bearerAuth: []
