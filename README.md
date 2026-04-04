@@ -113,7 +113,7 @@ Server will start at `http://localhost:3000`
 
 #### Dashboard Response includes:
 - Total income
-- Total expenses  
+- Total expenses
 - Net balance
 - Category wise totals
 - Monthly trends
