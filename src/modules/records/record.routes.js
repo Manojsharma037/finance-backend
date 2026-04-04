@@ -7,7 +7,7 @@ const guard = require('../../middleware/roleGuard');
  * @swagger
  * /api/records:
  *   post:
- *     summary: Create a new financial record (Admin/Analyst only)
+ *     summary: Create a new financial record (Admin only)
  *     tags: [Records]
  *     security:
  *       - bearerAuth: []
@@ -39,13 +39,12 @@ const guard = require('../../middleware/roleGuard');
  *               notes:
  *                 type: string
  *                 example: April salary
- *     responses:
- *       201:
- *         description: Record created successfully
- *       403:
- *         description: Access denied
+ *               for_user_id:
+ *                 type: string
+ *                 example: "69d0d94e6c5375729a84726a"
+ *                 description: Optional - Admin can create record for any user
  */
-router.post('/', auth, guard('admin', 'analyst'), ctrl.create);
+router.post('/', auth, guard('admin'), ctrl.create);
 
 /**
  * @swagger
@@ -118,7 +117,7 @@ router.get('/', auth, ctrl.getAll);
  *       404:
  *         description: Record not found
  */
-router.put('/:id', auth, guard('admin', 'analyst'), ctrl.update);
+router.put('/:id', auth, guard('admin'), ctrl.update);
 
 /**
  * @swagger

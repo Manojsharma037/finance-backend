@@ -17,6 +17,6 @@ const guard = require('../../middleware/roleGuard');
  *       403:
  *         description: Access denied
  */
-router.get('/summary', auth, guard('admin', 'analyst'), ctrl.getSummary);
+router.get('/summary', auth, guard('admin', 'analyst','viewer'), ctrl.getSummary);
 
 module.exports = router;

@@ -3,11 +3,22 @@ const Record = require('./record.model');
 // POST /api/records
 exports.create = async (req, res) => {
   try {
-    const { amount, type, category, date, notes } = req.body;
+    const { amount, type, category, date, notes, for_user_id } = req.body;
+
+    if (!amount || !type || !category || !date)
+      return res.status(400).json({ error: 'Missing required fields' });
+
+    // Admin kisi bhi user ke liye record bana sake
+    let userId = req.user._id;
+    if (req.user.role === 'admin' && for_user_id) {
+      userId = for_user_id;
+    }
+
     const record = await Record.create({
-      user_id: req.user._id,
+      user_id: userId,
       amount, type, category, date, notes
     });
+
     res.status(201).json({ message: 'Record created', record });
   } catch (err) {
     res.status(400).json({ error: err.message });
