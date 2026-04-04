@@ -11,15 +11,28 @@ A backend system for a finance dashboard that supports financial record manageme
 - **Database**: MongoDB Atlas (Mongoose ODM)
 - **Authentication**: JWT (JSON Web Tokens)
 - **Password Hashing**: bcryptjs
+- **API Documentation**: Swagger (swagger-jsdoc + swagger-ui-express)
+- **Deployment**: Render
+
+---
+
+## Live Demo
+
+- **API Documentation (Swagger)**: https://finance-backend-manoj.onrender.com/api-docs
+- **Base URL**: https://finance-backend-manoj.onrender.com
+
+> **Note:** First request may take 30-50 seconds as Render free tier spins up from sleep. Subsequent requests will be fast.
 
 ---
 
 ## Project Structure
+
 ```
 finance-backend/
 ├── src/
 │   ├── config/
-│   │   └── database.js        # MongoDB connection
+│   │   ├── database.js        # MongoDB connection
+│   │   └── swagger.js         # Swagger configuration
 │   ├── middleware/
 │   │   ├── auth.js            # JWT verification
 │   │   └── roleGuard.js       # Role based access control
@@ -46,7 +59,7 @@ finance-backend/
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/finance-backend.git
+git clone https://github.com/Manojsharma037/finance-backend.git
 cd finance-backend
 ```
 
@@ -74,6 +87,7 @@ npm start
 ```
 
 Server will start at `http://localhost:3000`
+Swagger docs at `http://localhost:3000/api-docs`
 
 ---
 
@@ -92,9 +106,9 @@ Server will start at `http://localhost:3000`
 
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| POST | `/api/records` | Admin, Analyst | Create a new record |
-| GET | `/api/records` | All roles | Get records (with filters) |
-| PUT | `/api/records/:id` | Admin, Analyst | Update a record |
+| POST | `/api/records` | Admin | Create a new record |
+| GET | `/api/records` | All roles | Get records with filters |
+| PUT | `/api/records/:id` | Admin | Update a record |
 | DELETE | `/api/records/:id` | Admin | Soft delete a record |
 
 #### Filters available on GET /api/records:
@@ -109,7 +123,7 @@ Server will start at `http://localhost:3000`
 
 | Method | Endpoint | Access | Description |
 |--------|----------|--------|-------------|
-| GET | `/api/dashboard/summary` | Admin, Analyst | Get financial summary |
+| GET | `/api/dashboard/summary` | All roles | Get financial summary |
 
 #### Dashboard Response includes:
 - Total income
@@ -128,10 +142,10 @@ Server will start at `http://localhost:3000`
 | Register / Login | ✅ | ✅ | ✅ |
 | View own records | ✅ | ✅ | ✅ |
 | View all records | ❌ | ✅ | ✅ |
-| Create records | ❌ | ✅ | ✅ |
-| Update records | ❌ | ✅ | ✅ |
+| Dashboard summary | ✅ | ✅ | ✅ |
+| Create records | ❌ | ❌ | ✅ |
+| Update records | ❌ | ❌ | ✅ |
 | Delete records | ❌ | ❌ | ✅ |
-| Dashboard summary | ❌ | ✅ | ✅ |
 | Manage users | ❌ | ❌ | ✅ |
 
 ---
@@ -139,6 +153,7 @@ Server will start at `http://localhost:3000`
 ## Authentication
 
 All protected routes require a Bearer token in the Authorization header:
+
 ```
 Authorization: Bearer <your_jwt_token>
 ```
@@ -161,13 +176,36 @@ Get the token by calling `/api/users/login`.
 
 ---
 
+## Design Decisions
+
+- **MongoDB over SQL**: Financial records are document-natured, no complex joins needed
+- **JWT over Sessions**: Stateless, scales easily across multiple servers
+- **Soft Delete**: Financial data should never be permanently lost — audit trail maintained
+- **Modular Structure**: Each feature independent, easy to maintain and scale
+- **Swagger Documentation**: API docs live alongside code — always in sync
+- **MongoDB Atlas**: Cloud hosted database — zero infrastructure setup
+
+---
+
 ## Assumptions Made
 
-- A user can self-register with any role during development. In production, role assignment should be restricted to admins only.
-- Soft delete is used for records — deleted records are hidden from all responses but remain in the database.
-- Viewers can only see their own records. Analysts and Admins can see all records.
-- MongoDB Atlas free tier (M0) is used for data persistence.
-- JWT tokens are valid for 7 days.
+1. Self-registration allowed with any role during development. In production, role assignment should be restricted to admins only.
+
+2. Soft delete used for records — financial data should never be permanently deleted for audit trail purposes.
+
+3. Viewer can only see their own records. Analysts and Admins can see all records.
+
+4. Dashboard shows company-wide financial summary — all roles can access it as it provides read-only overview.
+
+5. MongoDB Atlas M0 free tier used for data persistence. Production would use a paid tier.
+
+6. JWT tokens are valid for 7 days. Production would use shorter expiry with refresh tokens.
+
+7. Records are always created under the logged-in user's ID. Admin creating a record for another user is a future enhancement.
+
+8. Viewer's GET /api/records returns empty array in this demo as no records exist under viewer's ID — this is expected behaviour. In production, admin would create records for viewers.
+
+9. Analyst role is read-only as per assignment — can view records and access summaries but cannot create or modify records.
 
 ---
 
@@ -211,7 +249,3 @@ Authorization: Bearer <token>
 GET /api/dashboard/summary
 Authorization: Bearer <token>
 ```
-```
-
----
-
