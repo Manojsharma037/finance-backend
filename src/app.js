@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
 const connectDB = require('./config/database');
@@ -7,6 +8,7 @@ const connectDB = require('./config/database');
 const app = express();
 connectDB();
 
+app.use(cors());
 app.use(express.json());
 
 // Swagger docs
